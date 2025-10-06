@@ -1,0 +1,42 @@
+
+---
+# Java 25: Simpler, More Powerful Code
+**The new features you need to know.**
+
+Launched in **September 2025**, Java 25 continues the tradition: more performance, more security, and, most importantly, a **better experience for us, the DEVS!**
+
+## The Direction of Java
+
+Java 25 reinforces the platform's focus on 3 main pillars:
+
+1.  **Developer Productivity** (less repetitive code).
+2.  **Concurrency Simplification** (Project Loom).
+3.  **Cutting-Edge Performance** (JVM and low-level APIs).
+
+## Highlights That Will Impact Your Code
+
+### 1. Turbocharge Your Streams!
+* **Stream Gatherers (JEP 483)** is finally finished, introducing a powerful new API.
+* Think of it as a way to create your own **intermediate operations for Streams** (like `map` or `filter`), allowing you to group, filter, and transform data in ways that were previously very complex.
+
+### 2. Goodbye, '+' Concatenation!
+* With **String Templates (Second Preview)**, interpolating variables becomes much more **readable, efficient, and secure**.
+    * **BEFORE:** `String s = "Hello, " + name + "! You are " + age + " years old.";`
+    * **NOW:** `String s = STR."Hello, \{name}! You are \{age} years old.";`
+
+### 3. Painless Multithreading
+* **Structured Concurrency (Third Preview)** continues the Project Loom revolution.
+* It's now easier to treat multiple tasks on different threads as a **single unit of work**. If one fails, you can simply and safely cancel the others. It's like managing a team, not a bunch of individuals.
+
+### 4. Secure Data Sharing
+* **Scoped Values (Second Preview)** is the evolution of **ThreadLocal**.
+* It allows you to securely share **immutable data** within the same thread (and with child threads!), without having to pass parameters down the entire method stack. It's cleaner and much less error-prone.
+
+## And That's Not All...
+
+Java 25 also brings the evolution of other important features:
+
+* **Vector API (Eighth Incubator):** Continues to mature to extract maximum performance from modern CPUs, ideal for **AI, Big Data**, and **scientific computing**.
+* **Performance and security enhancements in the JVM core.**
+
+---

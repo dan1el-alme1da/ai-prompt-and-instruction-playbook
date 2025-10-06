@@ -1,0 +1,41 @@
+---
+# Java 25: Código Mais Simples e Poderoso
+**As novidades que você precisa conhecer.**
+
+Lançado em **setembro de 2025**, o Java 25 continua a tradição de: mais performance, mais segurança e, principalmente, uma **melhor experiência para os desenvolvedores (DEVS!)**.
+
+## A Direção do Java
+
+O Java 25 reforça o foco da plataforma em 3 pilares principais:
+
+1.  **Produtividade do Desenvolvedor** (menos código repetitivo).
+2.  **Simplificação da Concorrência** (Projeto Loom).
+3.  **Performance de Ponta** (JVM e APIs de baixo nível).
+
+## Destaques que Vão Impactar Seu Código
+
+### 1. Turbinando suas Streams!
+* **Stream Gatherers (JEP 483)** finalmente foi finalizada, sendo uma nova API poderosa.
+* Pense nela como uma forma de criar suas próprias **operações intermediárias para Streams** (como `map` ou `filter`), permitindo agrupar, filtrar e transformar dados de maneiras que antes eram muito complexas.
+
+### 2. Adeus, Concatenação com '+'!
+* Com **String Templates (Second Preview)**, interpolar variáveis fica muito mais **legível, eficiente e seguro**.
+    * **ANTES:** `String s = "Olá, " + nome + "! Você tem " + idade + " anos.";`
+    * **AGORA:** `String s = STR."Olá, \{nome}! Você tem \{idade} anos.";`
+
+### 3. Multithreading Sem Dor de Cabeça
+* A **Structured Concurrency (Third Preview)** continua a revolução do Projeto Loom.
+* Agora ficou mais fácil tratar várias tarefas em *threads* diferentes como uma **única unidade de trabalho**. Se uma falhar, você pode cancelar as outras de forma simples e segura. É como gerenciar um time, não um monte de indivíduos.
+
+### 4. Compartilhando Dados com Segurança
+* O **Scoped Values (Second Preview)** é a evolução do **ThreadLocal**.
+* Ele permite compartilhar **dados imutáveis** com segurança dentro de um mesmo *thread* (e para *threads* filhos!), sem precisar passar parâmetros por toda a pilha de métodos. É mais limpo e muito menos propenso a erros.
+
+## E não para por aí...
+
+O Java 25 também traz a evolução de outras *features* importantes:
+
+* **Vector API (Eighth Incubator):** Continua amadurecendo para extrair performance máxima de CPUs modernas, sendo ideal para **IA, Big Data** e **computação científica**.
+* **Melhorias de performance e segurança no core da JVM.**
+
+---
