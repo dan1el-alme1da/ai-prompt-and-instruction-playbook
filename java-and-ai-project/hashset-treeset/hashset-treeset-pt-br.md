@@ -117,5 +117,3 @@ public class ExemploTreeSet {
   * Lista de nomes ordenados $\rightarrow$ TreeSet
 
 -----
-
-Posso te ajudar com alguma dúvida sobre esses tópicos ou com outro código em Java?
