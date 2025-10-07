@@ -1,4 +1,3 @@
-Com certeza\! Com base nas imagens que você enviou, vou transcrever o conteúdo textual sobre o **Padrão de projeto Factory Method**, ignorando os vídeos e mantendo a formatação em Markdown.
 
 -----
 

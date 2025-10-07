@@ -1,4 +1,3 @@
-Com certeza\! Segue a tradução fiel do conteúdo sobre o **Factory Method Design Pattern** para o inglês.
 
 -----
 
