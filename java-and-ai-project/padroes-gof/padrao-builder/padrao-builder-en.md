@@ -22,31 +22,31 @@ Imagine you need a mechanism for a mediating system conversation, and this syste
 
 Imagine that the process of constructing any representation of a negotiation note is defined by using the following operations:
 
-  * **Query**:
+  * **Query**
       * Query information about the notes.
-  * **Identify**:
+  * **Identify**
       * Identify and catalog the negotiation notes.
-  * **Use**:
+  * **Use**
       * Document the note operations.
-  * **Generate**:
+  * **Generate**
       * Generate a summary with the totals and tickets of all daily operations.
 
 A solution frequently used for this problem is to apply all the discussed operations in an export method, as per the following code:
 
 ```java
 public class ExportaNota {
-    // ... other attributes
+    // ... outros atributos
     public String exportaNota(List<Negociacao> negociacoes, String formato, Exportador exportador) {
         String resultado = "";
         if (formato.equals("JSON")) {
             resultado += "{\n";
             resultado += " \"negociacoes\": [\n";
-            // ... conversion code for JSON
+            // ... código de conversão para JSON
             resultado += "]\n";
             resultado += "}";
         } else if (formato.equals("XML")) {
             resultado += "<negociacoes>\n";
-            // ... conversion code for XML
+            // ... código de conversão para XML
             resultado += "</negociacoes>\n";
         }
         return resultado;
@@ -56,13 +56,13 @@ public class ExportaNota {
 
 The **exportaNota** operation receives the list of negotiations and will export to the export format defined in **formato** (format).
 
-This approach has three (3) inadequacies, because, in addition to concentrating all the steps to export the negotiations in formats such as **JSON** or **XML** into a single method, the method is also concerned with the return for each specific format. Furthermore, the method must be modified with each new form of representation that the client wants. In such situations, the **Builder** pattern is the best alternative.
+This approach presents three (3) inadequacies, because, in addition to concentrating all the steps to export the negotiations in formats such as **JSON** or **XML** into a single method, the method is also concerned with the return for each specific format. Furthermore, the method must be modified with each new form of representation that the client wants. In such situations, the **Builder** pattern is the best alternative.
 
 -----
 
 ## Builder Pattern Solution
 
-The solution consists of having a common **Builder** that manages the creation of complex objects by the caller. The **Builder** is the central piece that hides all the complexity involved in creating the object, exposing only the necessary methods.
+The solution consists of having a common **Builder** (Constructor) that manages the creation of complex objects by the caller. The **Builder** is the central piece that hides all the complexity involved in creating the object, exposing only the necessary methods.
 
 The **Director** manages the **Builder**, which constructs the parts of the **Product** and returns it.
 
@@ -71,6 +71,8 @@ The **Director** manages the **Builder**, which constructs the parts of the **Pr
 The **Builder** architecture defines the operations that create the different parts of a product (a way to export a negotiation note in **JSON**, for example). The **ConcreteBuilder** implements the construction steps of the **Builder** and defines the product to be returned, containing all the different forms of representation (negotiation note in **JSON**, **XML**, **CSV**, **TEXT**, and others).
 
 The **Director** manages the **Builder**, which constructs the parts of the **Product** and returns it.
+
+**[Diagram illustrating the interaction between Director, Builder, ConcreteBuilder, and Product classes]**
 
 ### Pattern
 
@@ -90,18 +92,54 @@ The responsibilities of each class are:
   * **Product**:
       * Represents the complex object that is being constructed.
 
-### Relationship with the Abstract Factory Pattern
+The **NotaNegociacaoExportavelBuilderImpl** class is an example of a client of the **ExportavelBuilder** interface. The **build()** method returns the instance of **NotaNegociacaoExportavelImpl**.
 
-The **Builder** pattern is similar to the **Abstract Factory** pattern solution, as both construct complex objects. The main difference between the two patterns is:
+```java
+// Código de exemplo para a classe NotaNegociacaoExportavelBuilderImpl (Example code for the NotaNegociacaoExportavelBuilderImpl class)
+public class NotaNegociacaoExportavelBuilderImpl implements ExportavelBuilder<NotaNegociacaoExportavel> {
+    private NotaNegociacaoExportavelImpl notaExportavel;
 
-| Pattern | Objective |
-| :--- | :--- |
-| **Builder** | Focuses on the manner of constructing a complex object in steps. |
-| **Abstract Factory** | Focuses on the creation of families of products, with one product being returned and the pattern allowing the client only to use one operation call. |
+    public NotaNegociacaoExportavelBuilderImpl(NotaNegociacaoExportavelImpl notaExportavel) {
+        this.notaExportavel = notaExportavel;
+    }
 
-### Applications of the Builder Design Pattern
+    @Override
+    public ExportavelBuilder<NotaNegociacaoExportavel> comTipo(String tipo) {
+        this.notaExportavel.setTipo(tipo);
+        return this;
+    }
 
-A typical application of the **Builder** pattern is the replacement of multiple conditions, allowing the configuration only of the concrete classes that implement the builder.
+    // ... outros métodos builder (other builder methods)
+    
+    @Override
+    public NotaNegociacaoExportavel build() {
+        return notaExportavel;
+    }
+}
+```
+
+The **NotaNegociacaoExportavelImpl** class implements the operations defined in **Exportavel**.
+
+```java
+// Código de exemplo para a classe NotaNegociacaoExportavelImpl (Example code for the NotaNegociacaoExportavelImpl class)
+public class NotaNegociacaoExportavelImpl implements NotaNegociacaoExportavel {
+    private String tipo;
+    private double valorTotal;
+    // ... outros atributos (other attributes)
+
+    // Getters e Setters
+
+    @Override
+    public void exportar() {
+        System.out.println("Exportando nota de negociação do tipo: " + tipo + " com valor total: " + valorTotal);
+        // Lógica de exportação (Export logic)
+    }
+}
+```
+
+There are some important considerations in the implementation of the **Builder** pattern:
+
+The **Builder** object, to be accessed, only has one product; after the execution of the **build()** method, a new **Builder** instance must be created to construct a new product.
 
 -----
 
@@ -124,3 +162,89 @@ The **Builder** pattern is frequently used in conjunction with other patterns.
   * The **Composite** pattern is used to represent objects composed of others in a tree representation hierarchy. The **Builder** can be used to construct complex **Composite**-type trees.
   * The **Abstract Factory** pattern, along with the **Builder**, can construct complex objects.
   * The **Singleton** pattern can be used to ensure that only one instance of the **Director** exists.
+
+### Applications of the Builder Design Pattern
+
+A typical application of the **Builder** pattern is the replacement of multiple conditions, allowing the configuration only of the concrete classes that implement the constructor.
+
+#### Builder Pattern Code Example
+
+```java
+// Definição da interface ExportavelBuilder (Definition of the ExportavelBuilder interface)
+public interface ExportavelBuilder<T extends Exportavel> {
+    ExportavelBuilder<T> comTipo(String tipo);
+    ExportavelBuilder<T> comValorTotal(double valorTotal);
+    // ... outros métodos builder (other builder methods)
+    T build();
+}
+```
+
+```java
+// Definição da interface Exportavel (Definition of the Exportavel interface)
+public interface Exportavel {
+    void exportar();
+}
+```
+
+Based on common constants, it is possible to define our **Product** and the most appropriate **Builder** for object generation.
+
+```java
+// Implementação da Product NotaNegociacaoExportavelImpl (Implementation of the Product NotaNegociacaoExportavelImpl)
+public class NotaNegociacaoExportavelImpl implements NotaNegociacaoExportavel {
+    private String tipo;
+    private double valorTotal;
+    // ... outros atributos (other attributes)
+
+    // Getters e Setters
+
+    @Override
+    public void exportar() {
+        System.out.println("Exportando nota de negociação do tipo: " + tipo + " com valor total: " + valorTotal);
+        // Lógica de exportação (Export logic)
+    }
+}
+```
+
+```java
+// Implementação do Builder NotaNegociacaoExportavelBuilderImpl (Implementation of the Builder NotaNegociacaoExportavelBuilderImpl)
+public class NotaNegociacaoExportavelBuilderImpl implements ExportavelBuilder<NotaNegociacaoExportavel> {
+    private NotaNegociacaoExportavelImpl notaExportavel;
+
+    public NotaNegociacaoExportavelBuilderImpl() {
+        this.notaExportavel = new NotaNegociacaoExportavelImpl();
+    }
+
+    @Override
+    public ExportavelBuilder<NotaNegociacaoExportavel> comTipo(String tipo) {
+        this.notaExportavel.setTipo(tipo);
+        return this;
+    }
+
+    @Override
+    public ExportavelBuilder<NotaNegociacaoExportavel> comValorTotal(double valorTotal) {
+        this.notaExportavel.setValorTotal(valorTotal);
+        return this;
+    }
+
+    @Override
+    public NotaNegociacaoExportavel build() {
+        return notaExportavel;
+    }
+}
+```
+
+Finally, it is possible to test the construction of the product using the configurations defined in the **NotaNegociacaoExportavelBuilderImpl** class.
+
+```java
+// Exemplo de uso (Usage Example)
+public class Cliente {
+    public static void main(String[] args) {
+        NotaNegociacaoExportavel nota = new NotaNegociacaoExportavelBuilderImpl()
+            .comTipo("Compra")
+            .comValorTotal(1500.75)
+            .build();
+        
+        nota.exportar();
+    }
+}
+```

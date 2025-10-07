@@ -22,13 +22,13 @@ Imagine que você precise de um mecanismo para uma conversa de sistema mediadora
 
 Imagine que o processo de construção de qualquer representação de nota de negociação seja definido pelo uso das seguintes operações:
 
-  * **Consultar**:
+  * **Consultar**
       * Consultar informações das notas.
-  * **Identificar**:
+  * **Identificar**
       * Identificar e catalogar as notas de negociação.
-  * **Usar**:
+  * **Usar**
       * Documentar as operações das notas.
-  * **Gerar**:
+  * **Gerar**
       * Gerar um sumário com os totais e *tickets* de todas as operações do dia.
 
 Uma solução frequentemente utilizada para tal problema é aplicar todas as operações conversadas em um método de exportação, conforme o código a seguir:
@@ -72,6 +72,8 @@ A arquitetura **Builder** define as operações que criam as diferentes partes d
 
 O **Director** gerencia o **Builder**, que constrói as partes do **Product** e o retorna.
 
+**[Nesta parte da imagem, há um diagrama de classes/sequência que não posso transcrever textualmente, mas que ilustra a interação entre Director, Builder, ConcreteBuilder e Product.]**
+
 ### Padrão
 
 O padrão **Builder** é um padrão de projeto criacional que permite construir objetos complexos passo a passo. O padrão **Builder** isola o código de construção do produto, de modo que a criação do objeto complexo possa ter diferentes representações (formatos para exportar notas de negociação: **JSON**, **XML**, **CSV**, **TEXTO** etc.), sendo controlado por um **Director**.
@@ -90,18 +92,54 @@ As responsabilidades de cada classe são:
   * **Product**:
       * Representa o objeto complexo que está sendo construído.
 
-### Relação com o padrão Abstract Factory
+A classe **NotaNegociacaoExportavelBuilderImpl** é um exemplo de cliente da interface **ExportavelBuilder**. O método **build()** retorna a instância de **NotaNegociacaoExportavelImpl**.
 
-O padrão **Builder** é similar à solução do padrão **Abstract Factory**, já que ambos constroem objetos complexos. A diferença principal entre os dois padrões é esta:
+```java
+// Código de exemplo para a classe NotaNegociacaoExportavelBuilderImpl
+public class NotaNegociacaoExportavelBuilderImpl implements ExportavelBuilder<NotaNegociacaoExportavel> {
+    private NotaNegociacaoExportavelImpl notaExportavel;
 
-| Padrão | Objetivo |
-| :--- | :--- |
-| **Builder** | Concentra-se na maneira de construir um objeto complexo em etapas. |
-| **Abstract Factory** | Concentra-se na criação de famílias de produtos, um produto sendo retornado e o padrão permitindo que o cliente apenas use uma chamada de operação. |
+    public NotaNegociacaoExportavelBuilderImpl(NotaNegociacaoExportavelImpl notaExportavel) {
+        this.notaExportavel = notaExportavel;
+    }
 
-### Aplicações do padrão de projeto Builder
+    @Override
+    public ExportavelBuilder<NotaNegociacaoExportavel> comTipo(String tipo) {
+        this.notaExportavel.setTipo(tipo);
+        return this;
+    }
 
-Uma aplicação típica do padrão **Builder** é a substituição de múltiplas condições, permitindo a configuração apenas das classes concretas que implementam o construtor.
+    // ... outros métodos builder
+    
+    @Override
+    public NotaNegociacaoExportavel build() {
+        return notaExportavel;
+    }
+}
+```
+
+A classe **NotaNegociacaoExportavelImpl** implementa as operações definidas em **Exportavel**.
+
+```java
+// Código de exemplo para a classe NotaNegociacaoExportavelImpl
+public class NotaNegociacaoExportavelImpl implements NotaNegociacaoExportavel {
+    private String tipo;
+    private double valorTotal;
+    // ... outros atributos
+
+    // Getters e Setters
+
+    @Override
+    public void exportar() {
+        System.out.println("Exportando nota de negociação do tipo: " + tipo + " com valor total: " + valorTotal);
+        // Lógica de exportação
+    }
+}
+```
+
+Existem algumas questões importantes na implementação do padrão **Builder**:
+
+O objeto **Builder** para ser acessado apenas possui um produto, após a execução do método **build()**, uma nova instância de **Builder** deve ser criada para construir um novo produto.
 
 -----
 
@@ -125,4 +163,88 @@ O padrão **Builder** é frequentemente usado em conjunto com outros padrões.
   * O padrão **Abstract Factory**, junto com o **Builder**, pode construir objetos complexos.
   * O padrão **Singleton** pode ser usado para garantir que apenas uma instância do **Director** exista.
 
------
+### Aplicações do padrão de projeto Builder
+
+Uma aplicação típica do padrão **Builder** é a substituição de múltiplas condições, permitindo a configuração apenas das classes concretas que implementam o construtor.
+
+#### Exemplo de código do padrão Builder
+
+```java
+// Definição da interface ExportavelBuilder
+public interface ExportavelBuilder<T extends Exportavel> {
+    ExportavelBuilder<T> comTipo(String tipo);
+    ExportavelBuilder<T> comValorTotal(double valorTotal);
+    // ... outros métodos builder
+    T build();
+}
+```
+
+```java
+// Definição da interface Exportavel
+public interface Exportavel {
+    void exportar();
+}
+```
+
+Com base em constantes comuns, é possível definir a nossa **Product** e o **Builder** mais apropriado para a geração dos objetos.
+
+```java
+// Implementação da Product NotaNegociacaoExportavelImpl
+public class NotaNegociacaoExportavelImpl implements NotaNegociacaoExportavel {
+    private String tipo;
+    private double valorTotal;
+    // ... outros atributos
+
+    // Getters e Setters
+
+    @Override
+    public void exportar() {
+        System.out.println("Exportando nota de negociação do tipo: " + tipo + " com valor total: " + valorTotal);
+        // Lógica de exportação
+    }
+}
+```
+
+```java
+// Implementação do Builder NotaNegociacaoExportavelBuilderImpl
+public class NotaNegociacaoExportavelBuilderImpl implements ExportavelBuilder<NotaNegociacaoExportavel> {
+    private NotaNegociacaoExportavelImpl notaExportavel;
+
+    public NotaNegociacaoExportavelBuilderImpl() {
+        this.notaExportavel = new NotaNegociacaoExportavelImpl();
+    }
+
+    @Override
+    public ExportavelBuilder<NotaNegociacaoExportavel> comTipo(String tipo) {
+        this.notaExportavel.setTipo(tipo);
+        return this;
+    }
+
+    @Override
+    public ExportavelBuilder<NotaNegociacaoExportavel> comValorTotal(double valorTotal) {
+        this.notaExportavel.setValorTotal(valorTotal);
+        return this;
+    }
+
+    @Override
+    public NotaNegociacaoExportavel build() {
+        return notaExportavel;
+    }
+}
+```
+
+Por fim, é possível testar a construção do produto, utilizando as configurações definidas na classe **NotaNegociacaoExportavelBuilderImpl**.
+
+```java
+// Exemplo de uso
+public class Cliente {
+    public static void main(String[] args) {
+        NotaNegociacaoExportavel nota = new NotaNegociacaoExportavelBuilderImpl()
+            .comTipo("Compra")
+            .comValorTotal(1500.75)
+            .build();
+        
+        nota.exportar();
+    }
+}
+```
